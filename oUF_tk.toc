@@ -1,0 +1,19 @@
+## Interface: 40200
+## Title: oUF_|cff00ccfftk|r
+## Author: turkoid
+## Version: 40200.1b
+## Notes: turkoid's oUF Layout
+## Dependencies: oUF, tkLib, tkMedia
+## OptionalDeps: oUF_Experience, oUF_DruidMana
+## X-tk: oUF_tk
+
+init.lua
+colors.lua
+config.lua
+vars.lua
+api.lua
+tags.lua
+layouts.lua
+func.lua
+core.lua
+
