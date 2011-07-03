@@ -147,35 +147,35 @@ local setStyle = function(self, unit)
     --xp bar
     if (IsAddOnLoaded('oUF_Experience') and layout.xpbar and (self.layout == 'pet' or (self.layout == 'player' and cfg.player.level ~= MAX_PLAYER_LEVEL and not IsXPUserDisabled()))) then
         local xb = CreateFrame('StatusBar', nil, self)
-		xb:SetHeight(layout.xpbar.height)
-		xb:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', offset, offset)
-		xb:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', -offset, offset)
-		xb:SetStatusBarTexture(cfg.statusbar.texture)
+        xb:SetHeight(layout.xpbar.height)
+        xb:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', offset, offset)
+        xb:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', -offset, offset)
+        xb:SetStatusBarTexture(cfg.statusbar.texture)
         xb:SetStatusBarColor(unpack(colors.experience))
         --api.setColor(xb, xb.SetStatusBarColor, colors.experience)
-		
-		local rb = CreateFrame('StatusBar', nil, xb)
-		rb:SetHeight(layout.xpbar.height)
-		rb:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', offset, offset)
-		rb:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', -offset, offset)
-		rb:SetStatusBarTexture(cfg.statusbar.texture)
+
+        local rb = CreateFrame('StatusBar', nil, xb)
+        rb:SetHeight(layout.xpbar.height)
+        rb:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', offset, offset)
+        rb:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', -offset, offset)
+        rb:SetStatusBarTexture(cfg.statusbar.texture)
         rb:SetStatusBarColor(unpack(colors.rested))
-		--api.setColor(rb, rb.SetStatusBarColor, colors.rested)
-		
+        --api.setColor(rb, rb.SetStatusBarColor, colors.rested)
+
         --xp text
         if (layout.tags.experience) then
             func.genTag(self, xb, 'Experience', layout.tags.experience, 'RIGHT')
         end
-        
+
         --xp tooltip
         if (layout.xpbar.tooltip) then
             xb:EnableMouse()
             xb:HookScript('OnLeave', GameTooltip_Hide)
             xb:HookScript('OnEnter', func.getXPTooltip)
         end
-        
-		self.Experience = xb
-		self.Experience.Rested = rb
+
+        self.Experience = xb
+        self.Experience.Rested = rb
     end
     
     --icons
