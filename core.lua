@@ -51,9 +51,6 @@ local setStyle = function(self, unit)
     self.padding = layout.general.padding * lib.resolution.mult or 0
     local offset = self.padding + self.border
     
-    --init tag frame
-    self.texts = {}
-    
     --health bar
     do        
         local hb = CreateFrame('StatusBar', nil, self)
