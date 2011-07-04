@@ -89,4 +89,65 @@ api.getDefaultFontString = function(parent, justifyh, size)
     return fs
 end
 
+api.genTag = function(f, parent, name, tag, justify, padding, width)
+    local cfgExists = type(tag) == 'table'
+    padding = padding or cfg.font.padding
+    width = width or justify == 'CENTER' and (f:GetWidth() + (2 * padding))
+    
+    local fs = api.getDefaultFontString(parent, justify, cfgExists and tag.size)      
+    fs:SetPoint(justify, parent, justify, justify == 'LEFT' and padding or justify == 'RIGHT' and -padding or 0, 0)
+    if (width) then
+        fs:SetWidth(width)
+    end
+    
+    if (not f.texts) then f.texts = {} end   
+    f.texts[name] = fs
+    
+    f:Tag(fs, cfgExists and tag.tag or tag)    
+    
+    return fs
+end
+
+api.addTag = function(tag, func, events, pool)
+    if (oUF.Tags[tag]) then
+        tk.message('WARNING! '..addon..' is overriding this tag: '..tag)
+    end
+    
+    oUF.Tags[tag] = func
+    oUF.TagEvents[tag] = events
+    
+    if (pool) then pool[tag] = func end
+    
+    return func
+end
+
+api.cloneTag = function(tag, orig, pool)
+    return api.addTag(tag, oUF.Tags[orig], oUF.TagEvents[orig], pool)
+end
+    
+api.formatValue = function(value, threshold) 
+    threshold = threshold or 1e3
+    if (value < threshold or value < 1e3) then
+        return value
+    elseif (value >= 1e6) then
+        return gsub(format('%.2fM', value / 1e6), '%.?0+([km])$', '%1')
+    elseif (value >= 1e3) then
+        return gsub(format('%.1fK', value / 1e3), '%.?0+([km])$', '%1')
+    end
+end
+
+api.formatDuration = function(duration)	
+    if (not duration) then return '' end
+
+    local h = floor(duration / 3600)
+    local m = floor(mod(duration / 60, 60))
+    local s = floor(mod(duration, 60))
+    
+    if (duration >= 3600) then
+        return format("%d:%.2d:%.2d", h, m, s)
+    else
+        return format("%d:%.2d", m, s)
+    end
+end
+
 tk.api = api

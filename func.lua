@@ -25,20 +25,6 @@ func.updateGroupIcons = function(self, event, unit)
     end
 end
 
-func.genTag = function(f, parent, name, tag, justify, padding, width)
-    local cfgExists = type(tag) == 'table'
-    padding = padding or cfg.font.padding
-    width = width or justify == 'CENTER' and (f:GetWidth() + (2 * padding))
-    
-    if (not f.texts) then f.texts = {} end
-    f.texts[name] = api.getDefaultFontString(parent, justify, cfgExists and tag.size)    
-    f.texts[name]:SetPoint(justify, parent, justify, justify == 'LEFT' and padding or justify == 'RIGHT' and -padding or 0, 0)
-    if (width) then
-        f.texts[name]:SetWidth(width)
-    end
-    --self:Tag(f.texts[name], cfgExists and tag.tag or tag)
-end
-
 do
     local xp = function(unit)
         if(unit == 'pet') then
@@ -54,7 +40,7 @@ do
         local exhaustion = GetXPExhaustion()
         local bars = unit == 'pet' and 6 or 20
 
-        GameTooltip:SetOwner(self, 'ANCHOR_BOTTOMRIGHT', 5, -5)
+        GameTooltip:SetOwner(self, 'ANCHOR_NONE', 5, -5)
         GameTooltip:AddLine(format('XP: %d / %d (%d%% - %d bars)', curxp, maxxp, curxp / maxxp * 100, bars))
         GameTooltip:AddLine(format('Left: %d (%d%% - %d bars)', maxxp - curxp, (maxxp - curxp) / maxxp * 100, bars * (maxxp - curxp) / maxxp))
         
@@ -68,14 +54,22 @@ end
 
 do
     local UnitPowerType = UnitPowerType    
+    local UnitPower, UnitPowerMax = UnitPower, UnitPowerMax
     
     func.PreUpdateDruidMana = function(self, unit)
         local xb = self.__owner.Experience
-        if (not xb or event ~= 'UNIT_DISPLAYPOWER') then return end        
+        if (not xb) then return end        
         local alpha = UnitPowerType(unit) == SPELL_POWER_MANA and 1 or 0
         
         if (xb:GetAlpha() ~= alpha) then
-            xb:SetSlpha(alpha)
+            xb:SetAlpha(alpha)
+        end
+    end
+    
+    
+    func.PostUpdateDruidMana = function(self, unit) 
+        if (UnitPower('player', SPELL_POWER_MANA) ~= UnitPowerMax('player', SPELL_POWER_MANA)) then
+            self.value:UpdateTag()
         end
     end
 end

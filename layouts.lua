@@ -54,16 +54,16 @@ layouts.player = {
         raid = 16,
     },  
     tags = {
-        name = '',
-        unitinfo = '',
-        health = '',
-        power = '',
+        name = '[tk:name]',
+        unitinfo = false,
+        health = false,
+        power = false,
         druidmana = {
-            tag = '',
+            tag = '[tk:druidmana]',
             size = 12,
         },
         experience = {
-            tag = '',
+            tag = '[tk:experience]',
             size = 12,
         },
     },

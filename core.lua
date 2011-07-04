@@ -75,12 +75,12 @@ local setStyle = function(self, unit)
 
         --name text
         if (layout.tags.name) then
-            func.genTag(self, hb, 'Name', layout.tags.name, 'LEFT')
+            api.genTag(self, hb, 'Name', layout.tags.name, 'LEFT')
         end
         
         --hp text
         if (layout.tags.health) then
-            func.genTag(self, hb, 'Health', layout.tags.health, 'RIGHT')
+            hb.value = api.genTag(self, hb, 'Health', layout.tags.health, 'RIGHT')
         end
         
         self.Health = hb        
@@ -110,12 +110,12 @@ local setStyle = function(self, unit)
         
         --unitinfo text
         if (layout.tags and layout.tags.unitinfo) then
-            func.genTag(self, pb, 'UnitInfo', layout.tags.unitinfo, 'LEFT')
+            api.genTag(self, pb, 'UnitInfo', layout.tags.unitinfo, 'LEFT')
         end
         
         --power text
         if (layout.tags and layout.tags.power) then
-            func.genTag(self, pb, 'Power', layout.tags.power, 'RIGHT')
+            pb.value = api.genTag(self, pb, 'Power', layout.tags.power, 'RIGHT')
         end
         
         self.Power = pb        
@@ -141,7 +141,7 @@ local setStyle = function(self, unit)
 
         --xp text
         if (layout.tags and layout.tags.experience) then
-            func.genTag(self, xb, 'Experience', layout.tags.experience, 'RIGHT')
+            xb.value = api.genTag(self, xb, 'Experience', layout.tags.experience, 'RIGHT')
         end
 
         --xp tooltip
@@ -173,7 +173,8 @@ local setStyle = function(self, unit)
         
         --druid mana text
         if (layout.tags and layout.tags.druidmana) then
-            func.genTag(self, db, 'DruidMana', layout.tags.druidmana, 'RIGHT')
+            db.value = api.genTag(self, db, 'DruidMana', layout.tags.druidmana, 'RIGHT')
+            db.PostUpdate = func.PostUpdateDruidMana
         end
         
         --hide xp bar if druid mana bar is showing

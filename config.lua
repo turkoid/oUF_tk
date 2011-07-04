@@ -13,8 +13,8 @@ local cfg = {
     },
     background = {
         texture = media.getTexture('white16x16.tga'),
-        color = colors.rgb.white,
-        alpha = 1 or media.default.alpha,
+        color = colors.rgb.black,
+        alpha = media.default.alpha,
         tile = false,
     },
     border = {
@@ -24,7 +24,7 @@ local cfg = {
         size = 1,
     },
     statusbar = {
-        texture = 'Interface\\AddOns\\NeedToKnow\\Textures\\Smoothv2.tga', -- media.getTexture('Flat.tga'),
+        texture = media.getTexture('Flat.tga'),
         bgmult = 0.3,
     },
     debuffhighlight ={
