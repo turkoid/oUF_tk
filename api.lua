@@ -56,8 +56,7 @@ end
 
 api.setColor = function(o, func, c, a)
     local r, g, b = lib.getRGB(c)    
-    tk.debug(o, func, c)
-    o[func](o, r, g, b, a or 1)
+    func(o, r, g, b, a or 1)
 end
 
 api.setBackdropColor = function(f, c, a)

@@ -69,16 +69,13 @@ end
 do
     local UnitPowerType = UnitPowerType    
     
-    func.PreUpdateDruidMana = function(self, event, unit)
-        if (not self.Experience) then return end
+    func.PreUpdateDruidMana = function(self, unit)
+        local xb = self.__owner.Experience
+        if (not xb or event ~= 'UNIT_DISPLAYPOWER') then return end        
+        local alpha = UnitPowerType(unit) == SPELL_POWER_MANA and 1 or 0
         
-        if (event == 'UNIT_DISPLAYPOWER') then
-            local xb = self.Experience
-            local alpha = UnitPowerType('player') == SPELL_POWER_MANA and 1 or 0
-            
-            if (xb:GetAlpha() ~= alpha) then
-                xb:SetSlpha(alpha)
-            end
+        if (xb:GetAlpha() ~= alpha) then
+            xb:SetSlpha(alpha)
         end
     end
 end

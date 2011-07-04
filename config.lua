@@ -97,14 +97,6 @@ local cfg = {
     },       
 }        
 
-cfg.player = {
-    name = UnitName('player'),
-    level = UnitLevel('player'),
-    race = UnitRace('player'),
-    class = select(2, UnitClass('player')),
-    faction = UnitFactionGroup('player'),
-}
-
 tk.cfg = cfg
 
 

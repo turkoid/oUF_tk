@@ -10,6 +10,8 @@ local tags = tk.tags
 local layouts = tk.layouts
 local func = tk.func
 
+local mult = 768/string.match(GetCVar("gxResolution"), "%d+x(%d+)")/(GetCVar('UIScale') or 1)
+
 local setStyle = function(self, unit)
     self.layout = api.getLayoutFromUnit(unit or self:GetName())
     self.colors = colors
@@ -39,14 +41,14 @@ local setStyle = function(self, unit)
     if (layout.border) then
         api.setBackdrop(self, vars.backdrops.all, cfg.background.color, cfg.background.alpha)
         api.setBorderColor(self, cfg.border.color, cfg.border.alpha)
-        self.border = cfg.border.size
+        self.border = cfg.border.size * lib.resolution.mult
     else
         api.setBackdrop(self, vars.backdrops.noborder, cfg.background.color, cfg.background.alpha)
         self.border = 0
     end
     
     --vars
-    self.padding = layout.general.padding or 0
+    self.padding = layout.general.padding * lib.resolution.mult or 0
     local offset = self.padding + self.border
     
     --init tag frame
@@ -120,22 +122,22 @@ local setStyle = function(self, unit)
     end
     
     --xp bar
-    if (IsAddOnLoaded('oUF_Experience') and layout.xpbar and (self.layout == 'pet' or (self.layout == 'player' and cfg.player.level ~= MAX_PLAYER_LEVEL and not IsXPUserDisabled()))) then
+    if (IsAddOnLoaded('oUF_Experience') and layout.xpbar and (self.layout == 'pet' or (self.layout == 'player' and lib.player.level ~= MAX_PLAYER_LEVEL and not IsXPUserDisabled()))) then
         local xb = CreateFrame('StatusBar', nil, self)
         xb:SetHeight(layout.xpbar.height)
         xb:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', offset, offset)
         xb:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', -offset, offset)
         xb:SetStatusBarTexture(cfg.statusbar.texture)
-        xb:SetStatusBarColor(unpack(colors.experience))
-        --api.setColor(xb, xb.SetStatusBarColor, colors.experience)
+        --xb:SetStatusBarColor(unpack(colors.experience))
+        api.setColor(xb, xb.SetStatusBarColor, colors.experience)
 
         local rb = CreateFrame('StatusBar', nil, xb)
         rb:SetHeight(layout.xpbar.height)
         rb:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', offset, offset)
         rb:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', -offset, offset)
         rb:SetStatusBarTexture(cfg.statusbar.texture)
-        rb:SetStatusBarColor(unpack(colors.rested))
-        --api.setColor(rb, rb.SetStatusBarColor, colors.rested)
+        --rb:SetStatusBarColor(unpack(colors.rested))
+        api.setColor(rb, rb.SetStatusBarColor, colors.rested)
 
         --xp text
         if (layout.tags and layout.tags.experience) then
@@ -154,7 +156,7 @@ local setStyle = function(self, unit)
     end
     
     --druid mana bar
-    if (IsAddOnLoaded('oUF_DruidMana') and layout.druidmanabar and cfg.player.class == 'DRUID') then      
+    if (IsAddOnLoaded('oUF_DruidMana') and layout.druidmanabar and lib.player.class == 'DRUID') then      
         local db = CreateFrame('StatusBar', nil, self)
         db:SetHeight(layout.druidmanabar.height)
         db:SetStatusBarTexture(cfg.statusbar.texture)
