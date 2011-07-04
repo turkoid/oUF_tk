@@ -66,4 +66,21 @@ do
     end
 end
 
+do
+    local UnitPowerType = UnitPowerType    
+    
+    func.PreUpdateDruidMana = function(self, event, unit)
+        if (not self.Experience) then return end
+        
+        if (event == 'UNIT_DISPLAYPOWER') then
+            local xb = self.Experience
+            local alpha = UnitPowerType('player') == SPELL_POWER_MANA and 1 or 0
+            
+            if (xb:GetAlpha() ~= alpha) then
+                xb:SetSlpha(alpha)
+            end
+        end
+    end
+end
+                
 tk.func = func

@@ -24,7 +24,7 @@ local cfg = {
         size = 1,
     },
     statusbar = {
-        texture = media.getTexture('Flat.tga'),
+        texture = 'Interface\\AddOns\\NeedToKnow\\Textures\\Smoothv2.tga', -- media.getTexture('Flat.tga'),
         bgmult = 0.3,
     },
     debuffhighlight ={
@@ -33,6 +33,7 @@ local cfg = {
     },
     combopoints = {
         texture = media.getTexture('cpoint.tga'),
+        color = colors.combopoints,
     },
     range = {
         inside = 1,

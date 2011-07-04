@@ -12,6 +12,7 @@ local func = tk.func
 
 local setStyle = function(self, unit)
     self.layout = api.getLayoutFromUnit(unit or self:GetName())
+    self.colors = colors
     
     local layout = layouts[self.layout]
     if (not layout) then
@@ -20,7 +21,7 @@ local setStyle = function(self, unit)
     end
     
     --size and position
-    self:SetSize(layout.width, layout.height)
+    self:SetSize(layout.general.width, layout.general.height)
     
     --create menu    
     self.menu = api.getMenu
@@ -30,8 +31,8 @@ local setStyle = function(self, unit)
     self:SetAttribute('*type2', 'menu')
     self:SetScript('OnEnter', UnitFrame_OnEnter)
     self:SetScript('OnLeave', UnitFrame_OnLeave)
-    self:SetAttribute('initial-height', layout.height)
-    self:SetAttribute('initial-width', layout.width)
+    self:SetAttribute('initial-height', layout.general.height)
+    self:SetAttribute('initial-width', layout.general.width)
     self:SetAttribute('alt-type1', 'focus')
     
     --background and border
@@ -45,7 +46,7 @@ local setStyle = function(self, unit)
     end
     
     --vars
-    self.padding = layout.padding or 0
+    self.padding = layout.general.padding or 0
     local offset = self.padding + self.border
     
     --init tag frame
@@ -85,7 +86,6 @@ local setStyle = function(self, unit)
     
     --power bar
     if (layout.powerbar) then      
-        tk.message('power')
         local pb = CreateFrame('StatusBar', nil, self)
         pb:SetHeight(layout.powerbar.height)
         pb:SetStatusBarTexture(cfg.statusbar.texture)
@@ -102,46 +102,21 @@ local setStyle = function(self, unit)
         pb.frequentUpdates = true
         
         --spark
-        if (layout.plugins.spark and self.layout == 'player') then
-        
+        if (layout.powerbar.spark and self.layout == 'player') then
+            
         end   
         
         --unitinfo text
-        if (layout.tags.unitinfo) then
+        if (layout.tags and layout.tags.unitinfo) then
             func.genTag(self, pb, 'UnitInfo', layout.tags.unitinfo, 'LEFT')
         end
         
         --power text
-        if (layout.tags.power) then
+        if (layout.tags and layout.tags.power) then
             func.genTag(self, pb, 'Power', layout.tags.power, 'RIGHT')
         end
         
         self.Power = pb        
-    end
-    
-    --druid mana bar
-    if (IsAddOnLoaded('oUF_DruidMana') and layout.druidmanabar and cfg.player.class == 'DRUID') then      
-        local db = CreateFrame('StatusBar', nil, self)
-        db:SetHeight(layout.druidmanabar.height)
-        db:SetStatusBarTexture(cfg.statusbar.texture)
-        db:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', offset, offset)
-        db:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', -offset, offset)
-        db:SetOrientation(layout.druidmanabar.orientation or 'HORIZONTAL')
-
-        db.bg = db:CreateTexture(nil, 'BORDER')
-        db.bg:SetAllPoints(db)
-        db.bg:SetTexture(cfg.statusbar.texture)
-        db.bg.multiplier = cfg.statusbar.bgmult 
-        
-        db.colorClass = true
-        db.frequentUpdates = true
-        
-        --druid mana text
-        if (layout.tags.druidmana) then
-            func.genTag(self, db, 'DruidMana', layout.tags.druidmana, 'RIGHT')
-        end
-        
-        self.DruidMana = db        
     end
     
     --xp bar
@@ -163,7 +138,7 @@ local setStyle = function(self, unit)
         --api.setColor(rb, rb.SetStatusBarColor, colors.rested)
 
         --xp text
-        if (layout.tags.experience) then
+        if (layout.tags and layout.tags.experience) then
             func.genTag(self, xb, 'Experience', layout.tags.experience, 'RIGHT')
         end
 
@@ -176,6 +151,35 @@ local setStyle = function(self, unit)
 
         self.Experience = xb
         self.Experience.Rested = rb
+    end
+    
+    --druid mana bar
+    if (IsAddOnLoaded('oUF_DruidMana') and layout.druidmanabar and cfg.player.class == 'DRUID') then      
+        local db = CreateFrame('StatusBar', nil, self)
+        db:SetHeight(layout.druidmanabar.height)
+        db:SetStatusBarTexture(cfg.statusbar.texture)
+        db:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', offset, offset)
+        db:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', -offset, offset)
+        db:SetOrientation(layout.druidmanabar.orientation or 'HORIZONTAL')
+
+        db.bg = db:CreateTexture(nil, 'BORDER')
+        db.bg:SetAllPoints(db)
+        db.bg:SetTexture(cfg.statusbar.texture)
+        db.bg.multiplier = cfg.statusbar.bgmult 
+        
+        db.frequentUpdates = true
+        
+        --druid mana text
+        if (layout.tags and layout.tags.druidmana) then
+            func.genTag(self, db, 'DruidMana', layout.tags.druidmana, 'RIGHT')
+        end
+        
+        --hide xp bar if druid mana bar is showing
+        if (self.Experience) then
+            db.PreUpdate = func.PreUpdateDruidMana
+        end
+        
+        self.DruidMana = db        
     end
     
     --icons
@@ -241,7 +245,7 @@ local setStyle = function(self, unit)
     --buffs
     if (layout.buffs) then
         local buffs = CreateFrame('Frame', nil, self)
-        buffs.size = layout.buffs.size or layout.width / layout.buffs.cols
+        buffs.size = layout.buffs.size or layout.general.width / layout.buffs.cols
         buffs['spacing-x'] = layout.buffs.spacingx or 0
         buffs['spacing-y'] = layout.buffs.spacingy or 0
         buffs:SetWidth((buffs.size + buffs['spacing-x']) * layout.buffs.cols)
@@ -260,7 +264,7 @@ local setStyle = function(self, unit)
     --debuffs
     if (layout.debuffs) then
         local debuffs = CreateFrame('Frame', nil, self)
-        debuffs.size = layout.debuffs.size or layout.width / layout.debuffs.cols
+        debuffs.size = layout.debuffs.size or layout.general.width / layout.debuffs.cols
         debuffs['spacing-x'] = layout.debuffs.spacingx or 0
         debuffs['spacing-y'] = layout.debuffs.spacingy or 0
         debuffs:SetWidth((debuffs.size + debuffs['spacing-x']) * layout.debuffs.cols)
@@ -283,7 +287,7 @@ end
 oUF:RegisterStyle('oUF_tk', setStyle)
 oUF:SetActiveStyle('oUF_tk')
 
-if (layouts.player) then    
+if (true and layouts.player) then    
     local player = oUF:Spawn('player', 'oUF_tkPlayer')
     player:SetPoint(layouts.player.position.self_anchor, UIParent, layouts.player.position.target_anchor, layouts.player.position.x, layouts.player.position.y)
 end 

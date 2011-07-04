@@ -10,9 +10,14 @@ local tags = tk.tags
 
 local layouts = {}
 layouts.player = {
-    height = 66,
-    width = 310,
-    padding = 1,
+    general = {
+        height = 66,
+        width = 310,
+        padding = 1,
+        vehicle = true,
+        spark = true,
+        debuff_highlight = true,
+    },
     position = {
         self_anchor = 'TOPRIGHT',
         target = 'ui',
@@ -22,22 +27,21 @@ layouts.player = {
     },    
     healthbar = {
         height = 36,
-        orientation = 'HORIZONTAL'
+        orientation = 'HORIZONTAL',
     },
     powerbar = {
         height = 16,
-        orientation = 'HORIZONTAL'
+        orientation = 'HORIZONTAL',
+        spark = true,
     },
     druidmanabar = {
         height = 12,
-        orientation = 'HORIZONTAL'
+        orientation = 'HORIZONTAL',
     },
-    --[[
     xpbar = {
         height = 12,
         tooltip = true,
     },
-    ]]--
     icons = {
         size = 10,
         quest = false,
@@ -49,12 +53,6 @@ layouts.player = {
         combat = 16,
         raid = 16,
     },  
-    plugins = {
-        vehicle = true,
-        spark = true,
-        debuff_highlight = true,
-        range = true,
-    },
     tags = {
         name = '',
         unitinfo = '',
