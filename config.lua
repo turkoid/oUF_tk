@@ -98,6 +98,3 @@ local cfg = {
 }        
 
 tk.cfg = cfg
-
-
-

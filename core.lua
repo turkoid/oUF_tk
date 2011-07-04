@@ -293,6 +293,4 @@ oUF:SetActiveStyle('oUF_tk')
 if (true and layouts.player) then    
     local player = oUF:Spawn('player', 'oUF_tkPlayer')
     player:SetPoint(layouts.player.position.self_anchor, UIParent, layouts.player.position.target_anchor, layouts.player.position.x, layouts.player.position.y)
-end 
-    
-        
+end

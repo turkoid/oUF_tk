@@ -30,5 +30,3 @@ colors.rested = lib.getPercentRGB(155, 40, 255)
 lib.createFallback(colors, oUF.colors, true)
 
 tk.colors = colors
-
-

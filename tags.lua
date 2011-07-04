@@ -28,3 +28,5 @@ api.addTag('tk:experience', function(u, r)
 end, 'PLAYER_XP_UPDATE PLAYER_LEVEL_UP UNIT_PET_EXPERIENCE UPDATE_EXHAUSTION', tags)
 
 api.cloneTag('tk:name', 'name', tags)
+
+tk.tags = tags
