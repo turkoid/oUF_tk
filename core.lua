@@ -311,7 +311,7 @@ do
     end    
     
     for unit, layout in pairs(layouts) do
-        if (not layout.spawned) then
+        if (not frames[unit]) then
             spawn(unit, layout)
         end
     end
