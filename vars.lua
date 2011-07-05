@@ -82,4 +82,6 @@ vars.backdrops = {
     },
 }
 
+vars.AFKTimers = {}
+
 tk.vars = vars

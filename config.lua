@@ -54,8 +54,8 @@ local cfg = {
             ['rareelite'] = 'Rare Elite',
             ['elite'] = 'Elite',
             ['rare'] = 'Rare',
-            ['normal'] = '',
-            ['trivial'] = '',
+            --['normal'] = '',
+            --['trivial'] = '',
         },
     },
     icons = {

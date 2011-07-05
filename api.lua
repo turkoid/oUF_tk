@@ -83,7 +83,8 @@ api.getDefaultFontString = function(parent, justifyh, size)
     fs:SetShadowColor(0, 0, 0)
 	fs:SetShadowOffset(1, -1)
 	fs:SetJustifyV('CENTER')
-    fs:SetJustifyH(justifyh or 'LEFT')    
+    fs:SetJustifyH(justifyh or 'LEFT')
+    fs:SetHeight(size or cfg.font.size)
     fs:SetTextColor(r, g, b)
     
     return fs
@@ -96,10 +97,8 @@ api.genTag = function(f, parent, name, tag, justify, padding, width)
     
     local fs = api.getDefaultFontString(parent, justify, cfgExists and tag.size)      
     fs:SetPoint(justify, parent, justify, justify == 'LEFT' and padding or justify == 'RIGHT' and -padding or 0, 0)
-    if (width) then
-        fs:SetWidth(width)
-    end
-    
+    if (width) then fs:SetWidth(width) end
+    fs.frequentUpdates = cfgExists and tag.frequent
     if (not f.texts) then f.texts = {} end   
     f.texts[name] = fs
     
@@ -108,21 +107,38 @@ api.genTag = function(f, parent, name, tag, justify, padding, width)
     return fs
 end
 
-api.addTag = function(tag, func, events, pool)
-    if (oUF.Tags[tag]) then
-        tk.message('WARNING! '..addon..' is overriding this tag: '..tag)
+do
+    local removeDuplicateEvents = function(...)
+        local registered, events, eventgroup = {}, ''
+        for i = 1, select('#', ...) do
+            eventgroup = select(i, ...)
+            if (eventgroup) then
+                for event in eventgroup:gmatch('%S+') do
+                    if (not registered[event]) then
+                        registered[event] = true
+                        events = events..event..' '
+                    end
+                end
+            end
+        end
+
+        return events
     end
     
-    oUF.Tags[tag] = func
-    oUF.TagEvents[tag] = events
-    
-    if (pool) then pool[tag] = func end
-    
-    return func
-end
+    api.addTag = function(tag, func, ...)
+        if (oUF.Tags[tag]) then
+            tk.message('WARNING! '..addon..' is overriding this tag: '..tag)
+        end
 
-api.cloneTag = function(tag, orig, pool)
-    return api.addTag(tag, oUF.Tags[orig], oUF.TagEvents[orig], pool)
+        oUF.Tags[tag] = func
+        oUF.TagEvents[tag] = removeDuplicateEvents(...)
+
+        return func
+    end
+
+    api.cloneTag = function(tag, orig)
+        return api.addTag(tag, oUF.Tags[orig], oUF.TagEvents[orig])
+    end
 end
     
 api.formatValue = function(value, threshold) 
@@ -136,7 +152,7 @@ api.formatValue = function(value, threshold)
     end
 end
 
-api.formatDuration = function(duration)	
+api.formatAFKDuration = function(duration)	
     if (not duration) then return '' end
 
     local h = floor(duration / 3600)
@@ -150,4 +166,7 @@ api.formatDuration = function(duration)
     end
 end
 
+api.UnitInGroup = function(unit)
+    return UnitPlayerOrPetInParty(unit) or UnitPlayerOrPetInRaid(unit)
+end
 tk.api = api

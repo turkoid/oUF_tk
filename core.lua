@@ -10,7 +10,7 @@ local tags = tk.tags
 local layouts = tk.layouts
 local func = tk.func
 
-local mult = 768/string.match(GetCVar("gxResolution"), "%d+x(%d+)")/(GetCVar('UIScale') or 1)
+local mult = 768/string.match(GetCVar('gxResolution'), '%d+x(%d+)')/(GetCVar('UIScale') or 1)
 
 local setStyle = function(self, unit)
     self.layout = api.getLayoutFromUnit(unit or self:GetName())
@@ -22,6 +22,7 @@ local setStyle = function(self, unit)
         return self
     end
     
+    --self.disallowVehicleSwap = false
     --size and position
     self:SetSize(layout.general.width, layout.general.height)
     
@@ -72,7 +73,7 @@ local setStyle = function(self, unit)
 
         --name text
         if (layout.tags.name) then
-            api.genTag(self, hb, 'Name', layout.tags.name, 'LEFT')
+            api.genTag(self, hb, 'Name', layout.tags.name, 'LEFT').frequentUpdates = 0.5
         end
         
         --hp text
@@ -102,7 +103,9 @@ local setStyle = function(self, unit)
         
         --spark
         if (layout.powerbar.spark and self.layout == 'player') then
+            local spark = pb:CreateTexture(nil, 'OVERLAY')
             
+            self.ManaSpark = spark
         end   
         
         --unitinfo text
@@ -125,7 +128,6 @@ local setStyle = function(self, unit)
         xb:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', offset, offset)
         xb:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', -offset, offset)
         xb:SetStatusBarTexture(cfg.statusbar.texture)
-        --xb:SetStatusBarColor(unpack(colors.experience))
         api.setColor(xb, xb.SetStatusBarColor, colors.experience)
 
         local rb = CreateFrame('StatusBar', nil, xb)
@@ -133,7 +135,6 @@ local setStyle = function(self, unit)
         rb:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', offset, offset)
         rb:SetPoint('BOTTOMRIGHT', self, 'BOTTOMRIGHT', -offset, offset)
         rb:SetStatusBarTexture(cfg.statusbar.texture)
-        --rb:SetStatusBarColor(unpack(colors.rested))
         api.setColor(rb, rb.SetStatusBarColor, colors.rested)
 
         --xp text
@@ -148,6 +149,8 @@ local setStyle = function(self, unit)
             xb:HookScript('OnEnter', func.getXPTooltip)
         end
 
+        xb.PostUpdate = func.PostUpdateExperience
+        
         self.Experience = xb
         self.Experience.Rested = rb
     end
@@ -231,7 +234,6 @@ local setStyle = function(self, unit)
                             regEvent = regEvent or not iconlayouts[self.layout] or iconlayouts[self.layout] > 0
                             
                             if (regEvent) then 
-                                tkLib.debug(event, self.layout, iconkey)
                                 self:RegisterEvent(event, func.updateGroupIcons) 
                                 break
                             end
@@ -285,9 +287,34 @@ local setStyle = function(self, unit)
 end
 
 oUF:RegisterStyle('oUF_tk', setStyle)
-oUF:SetActiveStyle('oUF_tk')
 
-if (true and layouts.player) then    
-    local player = oUF:Spawn('player', 'oUF_tkPlayer')
-    player:SetPoint(layouts.player.position.self_anchor, UIParent, layouts.player.position.target_anchor, layouts.player.position.x, layouts.player.position.y)
+--player, target, pet, targettarget, party, partytarget, partypet
+do
+    oUF:SetActiveStyle('oUF_tk')
+    
+    local frames = {}
+    local spawn = function(unit, layout)
+        local layout = layout or layouts[unit]
+        local pos, target = layout.position
+        
+        if (pos.target and layouts[pos.target]) then
+            target = frames[pos.target] or spawn(pos.target, layouts[pos.target])
+        else
+            target = UIParent
+        end
+        
+        local f = oUF:Spawn(unit, 'oUF_tk'..(layout.general.name or string.upper(unit)))
+        f:SetPoint(pos.self_anchor, target, pos.target_anchor, pos.x, pos.y)
+        frames[unit] = f
+        
+        return f
+    end    
+    
+    for unit, layout in pairs(layouts) do
+        if (not layout.spawned) then
+            spawn(unit, layout)
+        end
+    end
+    
+    tk.frames = frames
 end

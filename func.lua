@@ -20,11 +20,12 @@ func.updateGroupIcons = function(self, event, unit)
         if (icon) then
             icon:ClearAllPoints()
             icon:SetPoint('BOTTOMLEFT', self, 'BOTTOMLEFT', offset, self.padding + self.border)
-            offset = offset + icon:GetWidth() + 1
+            offset = offset + icon:GetWidth() + lib.resolution.mult
         end
     end
 end
 
+--Experience
 do
     local xp = function(unit)
         if(unit == 'pet') then
@@ -35,7 +36,7 @@ do
     end
     
     func.getXPTooltip = function(self)
-        local unit = self:GetParent().unit
+        local unit = self.__owner.unit
         local curxp, maxxp = xp(unit)
         local exhaustion = GetXPExhaustion()
         local bars = unit == 'pet' and 6 or 20
@@ -50,28 +51,34 @@ do
 
         GameTooltip:Show()
     end
+    
+    func.PostUpdateExperience = function(element, unit)
+        if (unit == 'vehicle') then
+            element:Hide()
+        end
+    end
 end
 
+--DruidMana
 do
     local UnitPowerType = UnitPowerType    
     local UnitPower, UnitPowerMax = UnitPower, UnitPowerMax
     
-    func.PreUpdateDruidMana = function(self, unit)
-        local xb = self.__owner.Experience
+    func.PreUpdateDruidMana = function(element, unit)
+        local xb = element.__owner.Experience
         if (not xb) then return end        
-        local alpha = UnitPowerType(unit) == SPELL_POWER_MANA and 1 or 0
+        local alpha = UnitPowerType('player') == SPELL_POWER_MANA and 1 or 0
         
-        if (xb:GetAlpha() ~= alpha) then
+        if (xb:GetAlpha() ~= alpha) then        
             xb:SetAlpha(alpha)
         end
-    end
+    end    
     
-    
-    func.PostUpdateDruidMana = function(self, unit) 
-        if (UnitPower('player', SPELL_POWER_MANA) ~= UnitPowerMax('player', SPELL_POWER_MANA)) then
-            self.value:UpdateTag()
+    func.PostUpdateDruidMana = function(element, unit) 
+        if (element.value and UnitPower('player', SPELL_POWER_MANA) ~= UnitPowerMax('player', SPELL_POWER_MANA)) then
+            element.value:UpdateTag()
         end
     end
 end
-                
+        
 tk.func = func
