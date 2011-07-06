@@ -190,7 +190,7 @@ end, events['tk:status'], events['tk:curhp'], events['tk:maxhp'], events['tk:mis
 
 --power combo tags
 api.addTag('tk:status|pp', function(unit)
-    if (tags['tk:status'](unit)) then return '' end
+    if (tags['tk:status'](unit)) then return end
     return UnitPowerMax(unit) > 0 and format('%s/%s', tags['tk:curpp'](unit), tags['tk:maxpp'](unit))
 end, events['tk:status'], events['tk:curpp'], events['tk:maxpp'])
 
@@ -199,14 +199,12 @@ api.addTag('tk:status|perpp', function(unit)
 end, events['tk:status'], events['tk:perpp'])
 
 api.addTag('tk:status|pp+per', function(unit)
-    local status = tags['tk:status'](unit)
-    if (status) then return status end
+    if (tags['tk:status'](unit)) then return end
     return UnitPowerMax(unit) > 0 and format('%s/%s | %s', tags['tk:curpp'](unit), tags['tk:maxpp'](unit), tags['tk:perpp'](unit))
 end, events['tk:status'], events['tk:curpp'], events['tk:maxpp'], events['tk:perpp'])
 
 api.addTag('tk:status|pp+(miss|per)', function(unit)
-    local status = tags['tk:status'](unit)
-    if (status) then return status end
+    if (tags['tk:status'](unit)) then return end
     return UnitPowerMax(unit) > 0 and format('%s/%s | %s', tags['tk:curpp'](unit), tags['tk:maxpp'](unit), UnitCanAssist('player', unit) and tags['tk:missingpp'](unit) or tags['tk:perpp'](unit))
 end, events['tk:status'], events['tk:curpp'], events['tk:maxpp'], events['tk:missingpp'], events['tk:perpp'])
 
