@@ -73,8 +73,6 @@ api.addTag('tk:diffcolor', function(unit)
     return lib.getHexRGB(GetQuestDifficultyColor(level > 0 and level or 999), true)
 end, events['tk:level'])
 
-
-
 api.addTag('tk:classcolor', function(unit)
     local _, class = UnitClassBase(unit)
     return lib.getHexRGB(colors.class[class] or cfg.font.color, true)
@@ -97,27 +95,119 @@ api.addTag('tk:smartrace', function(unit)
     end
 end)
 
+api.addTag('tk:status', function(unit)
+    if (UnitIsDead(unit)) then return 'Dead' end
+    if (UnitIsGhost(unit)) then return 'Ghost' end
+    if (not UnitIsConnected(unit)) then return 'Office' end
+end, events['status'])
+
+oUF.Tags["[missinghp]"] = function(unit)
+	if not unit then return "nil" end
+	local threshold = 0.01
+	local max = UnitHealthMax(unit)
+	local missing = max - UnitHealth(unit)
+	return (missing - (threshold * max)) > 0 and (Hex(1, 0, 0).."-"..MedValues(missing).."|r") or ""
+end
+
+api.addTag('tk:curhp', function(unit)
+    return api.formatValue(UnitHealth(unit), 1e5)
+end, events['curhp'])
+
+api.addTag('tk:maxhp', function(unit)
+    return api.formatValue(UnitHealthMax(unit), 1e5)
+end, events['maxhp'])
+
+api.addTag('tk:perhp', function(unit)
+    return tags['perhp'](unit)..'%'
+end, events['perhp'])
+
+api.addTag('tk:missinghp', function(unit)
+    local threshold, max, missing = 0.01, UnitHealthMax(unit)
+    missing = max - UnitHealth(unit)
+    return missing > (threshold * max) and lib.applyHex(missing, colors.hex.red)
+end, events['missinghp'])
+
+api.addTag('tk:curpp', function(unit)
+    return api.formatValue(UnitPower(unit), 1e5)
+end, events['curhp'])
+
+api.addTag('tk:maxpp', function(unit)
+    return api.formatValue(UnitPowerMax(unit), 1e5)
+end, events['curhp'])
+
+api.addTag('tk:perpp', function(unit)
+    return tags['perpp'](unit)..'%'
+end, events['curhp'])
+
+api.addTag('tk:missingpp', function(unit)
+    local threshold, max, missing = 0.01, UnitPowerMax(unit)
+    missing = max - UnitPower(unit)
+    return missing > (threshold * max) and lib.applyHex(missing, colors.hex.white)
+end, events['missingpp'])
+
 --combo tags
 api.addTag('tk:name+flags', function(unit)
-    local name, flag = tags['tk:name'](unit), tags['tk:flags'](unit)    
-    if (flag) then return name..' '..flag end
-    return name
+    local name, flag = tags['tk:name'](unit), tags['tk:flags'](unit)  
+    return api.concatTags(name, flag)
 end, events['tk:name'], events['tk:flags'])
 
---["unitinfo"] = "[classification] [diffcolor][level]|r [classcolor][classbase]|r [druidform] [SmartRace]",
 api.addTag('tk:unitinfo', function(unit)
-    local unitinfo, classification, level, classbase, druidform, race
+    local classification, level, classbase, druidform, race
     classification = tags['tk:classification'](unit)
     level = tags['tk:level'](unit)
     classbase = tags['tk:classbase'](unit)
     druidform = tags['tk:druidform'](unit)
-    race = tags['tk:smartrace'](unit) or ''
+    race = tags['tk:smartrace'](unit)
     
-    level = level and lib.applyHexToString(level, tags['tk:diffcolor'](unit))
-    classbase = classbase and lib.applyHexToString(classbase, tags['tk:classcolor'](unit))
+    level = level and lib.applyHex(level, tags['tk:diffcolor'](unit))
+    classbase = classbase and lib.applyHex(classbase, tags['tk:classcolor'](unit))
     
-    unitinfo = (classification and classification..' ' or '')..(level and level..' ' or '')..(classbase and classbase..' ' or '')..(druidform and druidform..' ' or '')..race
-    return unitinfo
+    return api.concatTags(classification, level, classbase, druidform, race)
 end, events['tk:classification'], events['tk:level'], events['tk:classbase'], events['tk:druidform'], events['tk:smartrace'])
+
+--health combo tags
+api.addTag('tk:status|hp', function(unit)
+    local status = tags['tk:status'](unit)
+    if (status) then return status end
+    return format('%s/%s', tags['tk:curhp'](unit), tags['tk:maxhp'](unit))
+end, events['tk:status'], events['tk:curhp'], events['tk:maxhp'])
+
+api.addTag('tk:status|perhp', function(unit)
+    return tags['tk:status'](unit) or tags['tk:perhp'](unit)
+end, events['tk:status'], events['tk:perhp'])
+
+api.addTag('tk:status|hp+per', function(unit)
+    local status = tags['tk:status'](unit)
+    if (status) then return status end
+    return format('%s/%s | %s', tags['tk:curhp'](unit), tags['tk:maxhp'](unit), tags['tk:perhp'](unit))
+end, events['tk:status'], events['tk:curhp'], events['tk:maxhp'], events['tk:perhp'])
+
+api.addTag('tk:status|hp+(miss|per)', function(unit)
+    local status = tags['tk:status'](unit)
+    if (status) then return status end
+    return format('%s/%s | %s', tags['tk:curhp'](unit), tags['tk:maxhp'](unit), UnitCanAssist('player', unit) and tags['tk:missinghp'](unit) or tags['tk:perhp'](unit))
+end, events['tk:status'], events['tk:curhp'], events['tk:maxhp'], events['tk:missinghp'], events['tk:perhp'])
+
+--power combo tags
+api.addTag('tk:status|pp', function(unit)
+    if (tags['tk:status'](unit)) then return '' end
+    return UnitPowerMax(unit) > 0 and format('%s/%s', tags['tk:curpp'](unit), tags['tk:maxpp'](unit))
+end, events['tk:status'], events['tk:curpp'], events['tk:maxpp'])
+
+api.addTag('tk:status|perpp', function(unit)
+    return not tags['tk:status'](unit) and UnitPowerMax(unit) > 0 and tags['tk:perpp'](unit)
+end, events['tk:status'], events['tk:perpp'])
+
+api.addTag('tk:status|pp+per', function(unit)
+    local status = tags['tk:status'](unit)
+    if (status) then return status end
+    return UnitPowerMax(unit) > 0 and format('%s/%s | %s', tags['tk:curpp'](unit), tags['tk:maxpp'](unit), tags['tk:perpp'](unit))
+end, events['tk:status'], events['tk:curpp'], events['tk:maxpp'], events['tk:perpp'])
+
+api.addTag('tk:status|pp+(miss|per)', function(unit)
+    local status = tags['tk:status'](unit)
+    if (status) then return status end
+    return UnitPowerMax(unit) > 0 and format('%s/%s | %s', tags['tk:curpp'](unit), tags['tk:maxpp'](unit), UnitCanAssist('player', unit) and tags['tk:missingpp'](unit) or tags['tk:perpp'](unit))
+end, events['tk:status'], events['tk:curpp'], events['tk:maxpp'], events['tk:missingpp'], events['tk:perpp'])
 
 tk.tags = tags

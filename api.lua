@@ -139,6 +139,15 @@ do
     api.cloneTag = function(tag, orig)
         return api.addTag(tag, oUF.Tags[orig], oUF.TagEvents[orig])
     end
+    
+    api.concatTags = function(...)
+        tag, tagpart = '' 
+        for i = 1, select('#', ...) do
+            tagpart = select(i, ...)
+            tag = tag..(tagpart and tagpart..' ' or '')
+        end        
+        return tag
+    end                
 end
     
 api.formatValue = function(value, threshold) 

@@ -59,8 +59,14 @@ layouts.player = {
             frequent = 0.5,
         },
         unitinfo = '[tk:unitinfo]',
-        health = false,
-        power = false,
+        health = {
+            tag = '[tk:status|hp+(miss|per)]',
+            frequent = 0.1,
+        },
+        power = {
+            tag = '[tk:status|pp+(miss|per)]',
+            frequent = 0.1,
+        },
         druidmana = {
             tag = '[tk:druidmana]',
             size = 12,
@@ -135,8 +141,8 @@ layouts.target = {
             frequent = 0.5,
         },
         unitinfo = '[tk:unitinfo]',
-        health = false,
-        power = false,
+        health = '[tk:status|hp+(miss|per)]',
+        power = '[tk:status|pp+(miss|per)]',
     },
     buffs = {
         rows = 1,
@@ -204,8 +210,8 @@ layouts.pet = {
     tags = {
         name = '[tk:name]',
         unitinfo = '[tk:unitinfo]',
-        health = false,
-        power = false,
+        health = '[tk:status|perhp]',
+        power = '[tk:status|pp]',
         druidmana = {
             tag = '[tk:druidmana]',
             size = 12,

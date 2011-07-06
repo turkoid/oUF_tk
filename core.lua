@@ -10,8 +10,6 @@ local tags = tk.tags
 local layouts = tk.layouts
 local func = tk.func
 
-local mult = 768/string.match(GetCVar('gxResolution'), '%d+x(%d+)')/(GetCVar('UIScale') or 1)
-
 local setStyle = function(self, unit)
     self.layout = api.getLayoutFromUnit(unit or self:GetName())
     self.colors = colors
@@ -184,6 +182,8 @@ local setStyle = function(self, unit)
         
         self.DruidMana = db        
     end
+    
+    --combopoints
     
     --icons
     if (layout.icons) then
