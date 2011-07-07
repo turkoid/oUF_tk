@@ -98,7 +98,7 @@ end)
 api.addTag('tk:status', function(unit)
     if (UnitIsDead(unit)) then return 'Dead' end
     if (UnitIsGhost(unit)) then return 'Ghost' end
-    if (not UnitIsConnected(unit)) then return 'Office' end
+    if (not UnitIsConnected(unit)) then return 'Offline' end
 end, events['status'])
 
 oUF.Tags["[missinghp]"] = function(unit)
