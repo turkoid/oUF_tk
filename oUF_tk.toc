@@ -8,6 +8,7 @@
 ## X-tk: oUF_tk
 
 init.lua
+plugins.xml
 colors.lua
 config.lua
 vars.lua

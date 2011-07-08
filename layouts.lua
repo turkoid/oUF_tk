@@ -1,5 +1,6 @@
 local addon, tk = ...
 
+local oUF = tk.oUF
 local lib = tk.lib
 local media = tk.media
 local colors = tk.colors
@@ -64,7 +65,7 @@ layouts.player = {
             frequent = 0.1,
         },
         power = {
-            tag = '[tk:status|pp+(miss|per)]',
+            tag = '[tk:status|pp]',
             frequent = 0.1,
         },
         druidmana = {
@@ -142,7 +143,7 @@ layouts.target = {
         },
         unitinfo = '[tk:unitinfo]',
         health = '[tk:status|hp+(miss|per)]',
-        power = '[tk:status|pp+(miss|per)]',
+        power = '[tk:status|pp]',
     },
     buffs = {
         rows = 1,

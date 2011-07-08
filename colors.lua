@@ -1,5 +1,6 @@
 local addon, tk = ...
 
+local oUF = tk.oUF
 local lib = tk.lib
 local media = tk.media
 local colors = {}

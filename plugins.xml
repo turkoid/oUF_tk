@@ -1,0 +1,5 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file='plugins\debuffhighlight.lua' />
+    <Script file='plugins\betterrange.lua' />
+    <Script file='plugins\sortedauras.lua' />
+</Ui>

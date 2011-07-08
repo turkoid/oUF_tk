@@ -1,5 +1,6 @@
 local addon, tk = ...
 
+local oUF = tk.oUF
 local lib = tk.lib
 local media = tk.media
 local colors = tk.colors
@@ -17,7 +18,7 @@ api.addTag('tk:druidmana', function(unit)
 end, 'UNIT_DISPLAYPOWER UNIT_POWER UNIT_MAXPOWER')
 
 api.addTag('tk:experience', function(unit)
-    local threshold, min, max = 0.01
+    local threshold, min, max = 0.1
     if (unit == 'pet') then
         min, max = GetPetExerience()
     else

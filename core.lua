@@ -1,5 +1,6 @@
 local addon, tk = ...
 
+local oUF = tk.oUF
 local lib = tk.lib
 local media = tk.media
 local colors = tk.colors
@@ -259,8 +260,9 @@ local setStyle = function(self, unit)
         buffs.filter = 'HELPFUL'
         buffs.num = layout.buffs.rows * layout.buffs.cols
         buffs:SetPoint(layout.buffs.self_anchor, self, layout.buffs.target_anchor, layout.buffs.x or 0, layout.buffs.y or 0)
+        buffs.sort = true
         
-        self.Buffs = buffs
+        self.SortedBuffs = buffs
     end
     
     --debuffs
@@ -278,17 +280,21 @@ local setStyle = function(self, unit)
         debuffs.filter = 'HARMFUL'
         debuffs.num = layout.debuffs.rows * layout.debuffs.cols
         debuffs:SetPoint(layout.debuffs.self_anchor, self, layout.debuffs.target_anchor, layout.debuffs.x or 0, layout.debuffs.y or 0)
+        debuffs.sort = false
         
-        self.Debuffs = debuffs
+        self.SortedDebuffs = debuffs
     end
     
     --range check
+    if (layout.general.rangecheck) then 
     
+    end
+        
 end
 
 oUF:RegisterStyle('oUF_tk', setStyle)
 
---player, target, pet, targettarget, party, partytarget, partypet
+--player, target, pet, targettarget, party, partytarget, partypet, boss
 do
     oUF:SetActiveStyle('oUF_tk')
     
