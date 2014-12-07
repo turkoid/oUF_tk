@@ -11,7 +11,5 @@ tk.media = tkMedia
 tk.createModule = function(module)
     module.parent = tk
 end
- 
-
 
 _G[global] = tk
