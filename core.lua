@@ -322,5 +322,6 @@ do
         end
     end
     
+    --set the var
     tk.frames = frames
 end
