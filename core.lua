@@ -321,7 +321,6 @@ do
             spawn(unit, layout)
         end
     end
-    
-    --set the var
+
     tk.frames = frames
 end
